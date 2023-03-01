@@ -1,5 +1,7 @@
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 
@@ -92,19 +94,34 @@ public class Hangman {
         int missCount = 0;
         char guess;
         StringBuilder misses = new StringBuilder();
+
+        char[] wordArray = word.toCharArray();
+        Character[] wordObjectArray = ArrayUtils.toObject(wordArray);
+        Character[] hiddenWord = ArrayUtils.clone(wordObjectArray);
+        hideWord(hiddenWord);
+
         while (missCount < 7) {
             System.out.println(gallows[missCount]);
-            char[] charArray = word.toCharArray();
-            Character[] charObjectArray = ArrayUtils.toObject(charArray);
+            if (missCount == 6) {
+                System.out.println("RIP!\n");
+                System.out.println("The word was: " + word);
+                break;
+            }
+            if (Arrays.equals(hiddenWord, wordObjectArray)) {
+                System.out.println("GOOD WORK!\n");
+                System.out.println("You made " + missCount + " misses!");
+                break;
+            }
 
-            System.out.println("Word: " + word);
-            System.out.println("Word: " + hideWord(word) + "\n");
-            System.out.println("Misses: " + misses + "\n");
+            System.out.print("Word: ");
+            printHiddenWord(hiddenWord);
+            System.out.println("\n\nMisses: " + misses + "\n");
             System.out.print("Guess: ");
             guess = scan.next().charAt(0);
             System.out.println();
-            if (checkGuess(charObjectArray, guess)) {
 
+            if (checkGuess(wordObjectArray, guess)) {
+                updatePlaceholders(wordObjectArray, hiddenWord, guess);
             } else {
                 misses.append(guess);
                 missCount++;
@@ -117,30 +134,34 @@ public class Hangman {
         return words[index];
     }
 
-    public static String hideWord(String word) {
-        int length = word.length();
-        StringBuilder hiddenWord = new StringBuilder();
-        for (int i = 0; i < word.length(); i++) {
-            hiddenWord.append("_ ");
-        }
-        return hiddenWord.toString();
+    public static void hideWord(Character[] word) {
+        Arrays.fill(word, '_');
     }
+
+    public static void printHiddenWord(Character[] word) {
+        for (int i = 0; i < word.length; i++) {
+            System.out.print(word[i] + " ");
+        }
+    }
+
     public static boolean checkGuess(Character[] word, char guess) {
         boolean check = false;
         for (int i = 0; i < word.length; i++) {
-            if (word[i].equals(guess)) check = true;
-            else check = false;
+            if (word[i].equals(guess)) {
+                check = true;
+                break;
+            }
         }
         return check;
     }
 
-    /*
-    checkGuess(): returns true if the user guessed a letter from the word correctly.
-    updatePlaceholders(): updates the placeholders when the user makes a correct guess.
-    printPlaceholders(): prints the placeholders.
-    printMissedGuesses(): prints guesses that the user missed.
-    */
-
+    public static void updatePlaceholders(Character[] word, Character[] hiddenWord, char guess) {
+        for (int i = 0; i < word.length; i++) {
+            if (word[i].equals(guess)) {
+                hiddenWord[i] = guess;
+            }
+        }
+    }
 }
 
 
