@@ -1,9 +1,7 @@
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
-
 import org.apache.commons.lang3.ArrayUtils;
-
 
 public class Hangman {
     static Scanner scan = new Scanner(System.in);
@@ -94,25 +92,33 @@ public class Hangman {
         int missCount = 0;
         char guess;
         StringBuilder misses = new StringBuilder();
-
+        /*
+        * Creating object array from a word.
+        */
         char[] wordArray = word.toCharArray();
         Character[] wordObjectArray = ArrayUtils.toObject(wordArray);
         Character[] hiddenWord = ArrayUtils.clone(wordObjectArray);
         hideWord(hiddenWord);
-
+        /*
+        * Looping until user ends a game
+        */
         while (missCount < 7) {
             System.out.println(gallows[missCount]);
+            //Loose case
             if (missCount == 6) {
                 System.out.println("RIP!\n");
                 System.out.println("The word was: " + word);
                 break;
             }
+            //Win case
             if (Arrays.equals(hiddenWord, wordObjectArray)) {
                 System.out.println("GOOD WORK!\n");
                 System.out.println("You made " + missCount + " misses!");
                 break;
             }
-
+            /*
+            * Printing main game
+            */
             System.out.print("Word: ");
             printHiddenWord(hiddenWord);
             System.out.println("\n\nMisses: " + misses + "\n");
@@ -128,22 +134,55 @@ public class Hangman {
             }
         }
     }
-
+    /**
+     * Function name – randomWord()
+     *
+     * @param words (String[])
+     * @return words[i] (String)
+     *
+     * Inside the function
+     *   1. Creates random number through a word.
+     *   2. Returns random word from an array.
+     */
     public static String randomWord(String[] words) {
         int index = new Random().nextInt(words.length);
         return words[index];
     }
-
+    /**
+     * Function name – hideWord()
+     *
+     * @param word (Character[])
+     *
+     * Inside the function
+     *   1. Converts all chars inside an array to '_'.
+     */
     public static void hideWord(Character[] word) {
         Arrays.fill(word, '_');
     }
-
+    /**
+     * Function name – printHiddenWord()
+     *
+     * @param word (Character[])
+     *
+     * Inside the function
+     *   1. Prints 'hidden' word with '_' characters.
+     */
     public static void printHiddenWord(Character[] word) {
         for (int i = 0; i < word.length; i++) {
             System.out.print(word[i] + " ");
         }
     }
-
+    /**
+     * Function name – checkGuess()
+     *
+     * @param word (Character[])
+     * @param guess (char)
+     * @return check (boolean)
+     *
+     * Inside the function
+     *   1. Iterate through word array checking whether guess equals any of characters inside.
+     *   2. Returns true if the guess was right.
+     */
     public static boolean checkGuess(Character[] word, char guess) {
         boolean check = false;
         for (int i = 0; i < word.length; i++) {
@@ -154,7 +193,16 @@ public class Hangman {
         }
         return check;
     }
-
+    /**
+     * Function name – updatePlaceholders()
+     *
+     * @param word (Character[])
+     * @param hiddenWord (Character[])
+     * @param guess (char)
+     *
+     * Inside the function
+     *   1. Iterates through a 'hidden word' to convert '_' into a guess character.
+     */
     public static void updatePlaceholders(Character[] word, Character[] hiddenWord, char guess) {
         for (int i = 0; i < word.length; i++) {
             if (word[i].equals(guess)) {
